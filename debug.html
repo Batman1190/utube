@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pages Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .box {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left-color: #f44336;
+        }
+        .warning {
+            border-left-color: #ff9800;
+        }
+        code {
+            background: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 GitHub Pages Diagnostic Tool</h1>
+    
+    <div class="box">
+        <h2>Step 1: Test This Page</h2>
+        <p>If you can see this page, GitHub Pages is working! ✅</p>
+        <p>If this page is also blank, the problem is with GitHub Pages setup, not your code.</p>
+    </div>
+    
+    <div class="box">
+        <h2>Step 2: Check Your Main File</h2>
+        <button onclick="testMainFile()">Test index.html</button>
+        <div id="results"></div>
+    </div>
+    
+    <div class="box warning">
+        <h2>Common Issues & Solutions</h2>
+        <h3>1. Blank Page</h3>
+        <ul>
+            <li><strong>Check browser console (F12)</strong> - Look for red errors</li>
+            <li><strong>File location</strong> - index.html must be in root directory</li>
+            <li><strong>GitHub Pages enabled?</strong> - Settings → Pages → Enable</li>
+            <li><strong>Wait 5-10 minutes</strong> - After enabling, it takes time</li>
+        </ul>
+        
+        <h3>2. JavaScript Errors</h3>
+        <ul>
+            <li>Open browser console (F12)</li>
+            <li>Look for red error messages</li>
+            <li>Share those errors to get help</li>
+        </ul>
+        
+        <h3>3. File Too Large</h3>
+        <ul>
+            <li>Your file is 2MB - that's large but should work</li>
+            <li>It may take 10-30 seconds to load</li>
+            <li>Be patient and check network tab</li>
+        </ul>
+    </div>
+    
+    <div class="box">
+        <h2>Quick Fix Checklist</h2>
+        <ol>
+            <li>✅ index.html is in root directory (not in a subfolder)</li>
+            <li>✅ GitHub Pages is enabled (Settings → Pages)</li>
+            <li>✅ Branch is set to <code>main</code> or <code>master</code></li>
+            <li>✅ Folder is set to <code>/ (root)</code></li>
+            <li>✅ Wait 5-10 minutes after enabling</li>
+            <li>✅ Clear browser cache (Ctrl+Shift+Delete)</li>
+            <li>✅ Try incognito/private browsing mode</li>
+        </ol>
+    </div>
+    
+    <div class="box error">
+        <h2>Still Not Working?</h2>
+        <p><strong>Do this:</strong></p>
+        <ol>
+            <li>Open your GitHub Pages URL</li>
+            <li>Press <strong>F12</strong> to open Developer Tools</li>
+            <li>Go to <strong>Console</strong> tab</li>
+            <li>Copy ALL red error messages</li>
+            <li>Share those errors - they tell us exactly what's wrong!</li>
+        </ol>
+        <p><strong>Without seeing the console errors, it's like trying to fix a car without looking under the hood.</strong></p>
+    </div>
+
+    <script>
+        function testMainFile() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Testing...</p>';
+            
+            fetch('index.html')
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('File not found');
+                })
+                .then(html => {
+                    const hasDoctype = html.trim().toLowerCase().startsWith('<!doctype');
+                    const hasHtml = html.includes('<html');
+                    const hasBody = html.includes('<body');
+                    
+                    let result = '<div class="box"><h3>Test Results:</h3><ul>';
+                    result += `<li>File exists: ✅ YES</li>`;
+                    result += `<li>Has DOCTYPE: ${hasDoctype ? '✅ YES' : '❌ NO'}</li>`;
+                    result += `<li>Has &lt;html&gt; tag: ${hasHtml ? '✅ YES' : '❌ NO'}</li>`;
+                    result += `<li>Has &lt;body&gt; tag: ${hasBody ? '✅ YES' : '❌ NO'}</li>`;
+                    result += `<li>File size: ${(html.length / 1024 / 1024).toFixed(2)} MB</li>`;
+                    result += '</ul></div>';
+                    
+                    resultsDiv.innerHTML = result;
+                })
+                .catch(error => {
+                    resultsDiv.innerHTML = `<div class="box error"><h3>Error:</h3><p>${error.message}</p><p>Make sure index.html is in the same directory!</p></div>`;
+                });
+        }
+        
+        // Auto-check on load
+        window.addEventListener('load', function() {
+            console.log('✅ Debug page loaded successfully!');
+            console.log('If you see this, JavaScript is working');
+        });
+    </script>
+</body>
+</html>
+
