@@ -1388,7 +1388,7 @@ console.log('YouTube API Key Manager initialized:', youtubeAPIKeyManager.getStat
         return `
             <div class="video-card" style="cursor: pointer; background: #1a1a1a; border-radius: 12px; overflow: hidden; transition: transform 0.2s;" onclick="playVideo('${video.id}')">
                 <div class="video-thumbnail" style="position: relative; width: 100%; padding-bottom: 56.25%; background: #000;">
-                    <img src="${video.thumbnail}" alt="${video.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/320x180?text=Video'">
+                    <img src="${video.thumbnail}" alt="${video.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect fill='%231a1a1a' width='320' height='180'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-family='Arial' font-size='14'%3EVideo%3C/text%3E%3C/svg%3E'">
                     <div class="video-duration" style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500;">${video.duration}</div>
                 </div>
                 <div class="video-info" style="padding: 12px;">
@@ -1582,7 +1582,7 @@ console.log('YouTube API Key Manager initialized:', youtubeAPIKeyManager.getStat
             return `
                 <div class="video-card" style="cursor: pointer; background: #1a1a1a; border-radius: 12px; overflow: hidden; transition: transform 0.2s;" onclick="playVideo('${video.id}')">
                     <div class="video-thumbnail" style="position: relative; width: 100%; padding-bottom: 56.25%; background: #000;">
-                        <img src="${video.thumbnail}" alt="${video.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/320x180?text=Video'">
+                        <img src="${video.thumbnail}" alt="${video.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect fill='%231a1a1a' width='320' height='180'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-family='Arial' font-size='14'%3EVideo%3C/text%3E%3C/svg%3E'">
                         <div class="video-duration" style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500;">${video.duration}</div>
                     </div>
                     <div class="video-info" style="padding: 12px;">
@@ -1616,7 +1616,7 @@ console.log('YouTube API Key Manager initialized:', youtubeAPIKeyManager.getStat
         return `
             <div class="video-card" style="cursor: pointer; background: #1a1a1a; border-radius: 12px; overflow: hidden; transition: transform 0.2s; position: relative;" onmouseenter="showVideoActions(this)" onmouseleave="hideVideoActions(this)">
                 <div class="video-thumbnail" style="position: relative; width: 100%; padding-bottom: 56.25%; background: #000;" onclick="playVideoWithHistory('${video.id}', ${JSON.stringify(video).replace(/"/g, '&quot;')})">
-                    <img src="${video.thumbnail}" alt="${video.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/320x180?text=Video'">
+                    <img src="${video.thumbnail}" alt="${video.title}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect fill='%231a1a1a' width='320' height='180'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-family='Arial' font-size='14'%3EVideo%3C/text%3E%3C/svg%3E'">
                     <div class="video-duration" style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: 500;">${video.duration || 'N/A'}</div>
                 </div>
                 <div class="video-info" style="padding: 12px;">
@@ -1831,4 +1831,30 @@ console.log('YouTube API Key Manager initialized:', youtubeAPIKeyManager.getStat
     height: 20px;
 }
 </style>
+<script>
+// Better image error handling
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle all image load errors
+    document.addEventListener('error', function(e) {
+        if (e.target.tagName === 'IMG') {
+            const img = e.target;
+            // If it's a video thumbnail, try YouTube's default
+            if (img.src && img.src.includes('youtube.com') || img.src.includes('ytimg.com')) {
+                // Extract video ID if possible
+                const videoIdMatch = img.src.match(/vi\/([^\/]+)/);
+                if (videoIdMatch) {
+                    img.src = `https://i.ytimg.com/vi/${videoIdMatch[1]}/maxresdefault.jpg`;
+                } else {
+                    // Use a simple colored placeholder
+                    img.style.display = 'none';
+                    img.parentElement.style.backgroundColor = '#1a1a1a';
+                }
+            } else {
+                // Hide broken images
+                img.style.display = 'none';
+            }
+        }
+    }, true);
+});
+</script>
 </body></html>
